@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManagerModel : MonoBehaviour
 {
     public List<int[]> matrixes = new List<int[]>();
-    // Start is called before the first frame update
+// Start is called before the first frame update
     void Start()
     {
         for (int i = 0; i < 10; i++)

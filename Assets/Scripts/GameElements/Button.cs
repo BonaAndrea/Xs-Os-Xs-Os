@@ -15,7 +15,7 @@ public class Button : MonoBehaviour
 
     public void OnButtonPress()
     {
-        GameManager.ButtonPress(identifier);
+        GameManager.ButtonPress(this);
     }
     
 }
