@@ -9,8 +9,12 @@ public class GameManagerView : MonoBehaviour
 {
 
     public Sprite X, O;
+    [SerializeField]
     private CameraManager _cameraManager;
+    [SerializeField]
+    private CanvasGroupManager _backButton;
 
+    public bool BackButtonEnabled = false;
     private void Awake()
     {
         _cameraManager = FindObjectOfType<CameraManager>();
@@ -34,18 +38,18 @@ public class GameManagerView : MonoBehaviour
         }
     }
 
-    public void MoveCamera(int identifier, bool hasParent = false)
+    public void MoveCamera(int identifier=0)
     {
-        if (!hasParent)
+        StartCoroutine(_cameraManager.MoveToPosition(identifier));
+        if (identifier != 0)
         {
-            StartCoroutine(_cameraManager.MoveToPosition(identifier));
+            _backButton.FadeIn();
         }
         else
         {
-            StartCoroutine(_cameraManager.MoveToPosition(0));
-
+            _backButton.FadeOut();
         }
     }
-    
-    
+
+
 }

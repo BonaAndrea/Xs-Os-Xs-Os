@@ -8,12 +8,17 @@ using UnityEngine.Analytics;
 public class GameManagerController : MonoBehaviour
 {
 
+    [SerializeField]
     private int player = 1;
 
     private GameManagerModel _model;
 
     private GameManagerView _view;
 
+    [SerializeField]
+    private Button[] _buttons;
+    
+    
     private int _nextSchema = -1;
     // Update is called once per frame
     void Awake()
@@ -49,23 +54,40 @@ public class GameManagerController : MonoBehaviour
             if (CheckForWin(_model.matrixes[parentButton.identifier]))
             {
                 _view.SetIcon(player, parentButton, false);
+                _model.matrixes[0][parentButton.identifier] = player;
             }
+
+            //settare nuovo valore di nextSchema
+            _nextSchema = (_model.matrixes[0][button.identifier] != 0) ? -1 : button.identifier+1;
+            Debug.Log("Next Schema: " + _nextSchema);
+            _view.MoveCamera((_nextSchema == -1) ? 0 : _nextSchema);
+            if (_nextSchema > 1)
+            {
+                _buttons[_nextSchema - 1].ManagerAboveMe.FadeIn();
+                _buttons[_nextSchema - 1].GroupAboveMe.interactable = true;
+                _buttons[_nextSchema - 1].GroupAboveMe.blocksRaycasts = true;
+            }
+            _view.BackButtonEnabled = (_nextSchema == -1);
+            CheckForWin(_model.matrixes[0]);
+            SwitchPlayer();
         }
-        _view.MoveCamera(0);
     }
-    
+
     private void CheckSlotAndPlay(Button button)
     {
-        if (_model.matrixes[0][button.identifier-1] == 0) //la casella principale è ancora indeterminata
+        if (_model.matrixes[0][button.identifier - 1] == 0) //la casella principale è ancora indeterminata
         {
             if (_nextSchema == -1)
             {
-                _view.MoveCamera(button.identifier);
+                _view.BackButtonEnabled = true;
             }
-        }
 
-        CheckForWin(_model.matrixes[0]);
-        SwitchPlayer();
+            _view.MoveCamera(button.identifier);
+            button.GroupAboveMe.interactable = false;
+            button.ManagerBelowMe.FadeIn();
+            button.GroupBelowMe.interactable = true;
+            button.GroupBelowMe.blocksRaycasts = true;
+        }
     }
 
     private void SwitchPlayer()

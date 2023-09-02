@@ -104,7 +104,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -149,6 +149,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: 0
   GameManager: {fileID: 0}
+  GroupAboveMe: {fileID: 0}
+  ManagerAboveMe: {fileID: 0}
+  GroupBelowMe: {fileID: 0}
+  ManagerBelowMe: {fileID: 0}
 --- !u!1 &8109816890001492742
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,10 +322,10 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8363975629472142304}
   m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 1
 --- !u!114 &561441228468564052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +350,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton (5)
@@ -452,6 +464,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton (4)
@@ -558,6 +578,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton (3)
@@ -660,6 +688,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5116760707369096045}
     m_Modifications:
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: Button
@@ -766,6 +802,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton (2)
@@ -872,6 +916,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton (1)
@@ -978,6 +1030,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton (6)
@@ -1084,6 +1144,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton
@@ -1190,6 +1258,14 @@ PrefabInstance:
       propertyPath: identifier
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: GroupAboveMe
+      value: 
+      objectReference: {fileID: 4271175939733391794}
+    - target: {fileID: 2277479659447899645, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
+      propertyPath: ManagerAboveMe
+      value: 
+      objectReference: {fileID: 561441228468564052}
     - target: {fileID: 3159479295372017955, guid: d102fc37b7502c0429de732c82c89bba, type: 3}
       propertyPath: m_Name
       value: SubButton (7)

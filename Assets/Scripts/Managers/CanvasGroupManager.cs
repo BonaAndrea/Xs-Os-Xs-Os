@@ -34,6 +34,7 @@ public class CanvasGroupManager : MonoBehaviour
             }
 
             _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
         }
         else
         {
@@ -44,6 +45,7 @@ public class CanvasGroupManager : MonoBehaviour
             }
 
             _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
         }
     }
     

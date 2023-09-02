@@ -7,6 +7,10 @@ public class Button : MonoBehaviour
 {
     public int identifier = 0;
     public GameManagerController GameManager;
+    public CanvasGroup GroupAboveMe;
+    public CanvasGroupManager ManagerAboveMe;
+    public CanvasGroup GroupBelowMe;
+    public CanvasGroupManager ManagerBelowMe;
 
     private void Awake()
     {
