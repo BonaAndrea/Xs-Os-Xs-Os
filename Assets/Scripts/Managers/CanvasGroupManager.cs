@@ -48,5 +48,19 @@ public class CanvasGroupManager : MonoBehaviour
             _canvasGroup.blocksRaycasts = false;
         }
     }
+
+    public void SetProperties(bool value)
+    {
+        if (value)
+        {
+            _canvasGroup.alpha = 1f;
+        }
+        else
+        {
+            _canvasGroup.alpha = 0f;
+        }
+        _canvasGroup.interactable = value;
+        _canvasGroup.blocksRaycasts = value;
+    }
     
 }

@@ -101,9 +101,9 @@ MonoBehaviour:
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -148,6 +148,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: 0
   GameManager: {fileID: 0}
+  GroupAboveMe: {fileID: 0}
+  ManagerAboveMe: {fileID: 0}
+  GroupBelowMe: {fileID: 0}
+  ManagerBelowMe: {fileID: 0}
+  ParentButton: {fileID: 0}
 --- !u!1 &3487276245253724682
 GameObject:
   m_ObjectHideFlags: 0

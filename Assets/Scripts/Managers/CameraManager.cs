@@ -18,12 +18,6 @@ public class CameraManager : MonoBehaviour
         _mainCamera = Camera.main;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public IEnumerator MoveToPosition(int identifier)
     {
         float startSize = _mainCamera.orthographicSize;
@@ -61,6 +55,4 @@ public class CameraManager : MonoBehaviour
         _mainCamera.orthographicSize = newSize;
         _mainCamera.transform.localPosition = newPosition;
     }
-
-
 }
