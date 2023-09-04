@@ -64,6 +64,7 @@ public class GameManagerController : MonoBehaviour
 
                 _view.MoveCamera(button.identifier);
                 button.SetGroupBelow(true);
+                button.SetGroupAbove(false);
                 Debug.Log("Acting on button", button.gameObject);
             }
         }
@@ -95,6 +96,10 @@ public class GameManagerController : MonoBehaviour
                 if (_nextSchema > 0)
                 {
                     _buttons[_nextSchema - 1].SetGroupBelow(true);
+                }
+                else
+                {
+                    SetAllTopGroupsEnabled();
                 }
 
                 _view.BackButtonEnabled = false;
@@ -154,7 +159,8 @@ public class GameManagerController : MonoBehaviour
     {
         _view.MoveCamera();
         _view.BackButtonEnabled = false;
-    SetAllSubGroupsDisabled();  
+        SetAllSubGroupsDisabled();  
+        SetAllTopGroupsEnabled();
     }
 
     public void SetAllSubGroupsDisabled()
@@ -163,6 +169,14 @@ public class GameManagerController : MonoBehaviour
         {
             b.GroupBelowMe.interactable=false;
             b.GroupBelowMe.blocksRaycasts=false;
+        }
+    }
+    
+    public void SetAllTopGroupsEnabled()
+    {
+        foreach (Button b in _buttons)
+        {
+            b.SetGroupAbove(true);
         }
     }
     
