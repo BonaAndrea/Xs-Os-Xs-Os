@@ -27,25 +27,25 @@ public class CanvasGroupManager : MonoBehaviour
         yield return null;
         if (fadeIn)
         {
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
             while (_canvasGroup.alpha < 1f)
             {
                 _canvasGroup.alpha += 0.1f;
                 yield return null;
             }
 
-            _canvasGroup.interactable = true;
-            _canvasGroup.blocksRaycasts = true;
         }
         else
         {
+
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
             while (_canvasGroup.alpha >= 0f)
             {
                 _canvasGroup.alpha -= 0.1f;
                 yield return null;
             }
-
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
         }
     }
 

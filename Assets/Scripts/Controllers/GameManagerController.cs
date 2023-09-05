@@ -63,7 +63,8 @@ public class GameManagerController : MonoBehaviour
                 }
 
                 _view.MoveCamera(button.identifier);
-                button.SetGroupBelow(true);
+                button.GroupBelowMe.alpha = 1f;
+                //button.SetGroupBelow(true);
                 button.SetGroupAbove(false);
                 Debug.Log("Acting on button", button.gameObject);
             }
@@ -89,21 +90,28 @@ public class GameManagerController : MonoBehaviour
 
                 SetAllSubGroupsDisabled();
                 
+                int mainWinSituation = CheckForWin(_model.matrixes[0]);
+                if (mainWinSituation != 0)
+                {
+                    _view.MoveCamera();
+                    _view.WinScreen(mainWinSituation);
+                    return;
+                }
+                
                 //settare nuovo valore di nextSchema
                 _nextSchema = (_model.matrixes[0][((button.ParentButton==null)?button.identifier+1:(button.identifier))] != 0) ? -1 :button.identifier+1;
                 Debug.Log("Next Schema: " + _nextSchema);
                 _view.MoveCamera((_nextSchema == -1) ? 0 : _nextSchema);
                 if (_nextSchema > 0)
                 {
-                    _buttons[_nextSchema - 1].SetGroupBelow(true);
+                    _buttons[_nextSchema - 1].GroupBelowMe.alpha = 1f;
                 }
-                else
-                {
-                    SetAllTopGroupsEnabled();
-                }
+                //else
+                //{
+                 //   SetAllTopGroupsEnabled();
+                //}
 
                 _view.BackButtonEnabled = false;
-                CheckForWin(_model.matrixes[0]);
                 SwitchPlayer();
             }
         }
@@ -179,6 +187,26 @@ public class GameManagerController : MonoBehaviour
             b.SetGroupAbove(true);
         }
     }
-    
+
+    public void HandleGroups(int identifier)
+    {
+        if (identifier == 0)
+        {
+            SetAllTopGroupsEnabled();
+        }
+        else
+        {
+            _buttons[identifier - 1].SetGroupBelow(true);
+        }
+    }
+    public void DisableAllSubGroups()
+    {
+        foreach (Button b in _buttons)
+        {
+            b.GroupBelowMe.interactable=false;
+            b.GroupBelowMe.blocksRaycasts=false;
+            b.GroupBelowMe.alpha = 0f;
+        }
+    }
     
 }

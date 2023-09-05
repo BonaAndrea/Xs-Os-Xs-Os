@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CameraManager : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class CameraManager : MonoBehaviour
     private float _cameraSize0 ;
     [SerializeField]
     private float _cameraSize1;
+
+
+    public UnityEvent<int> OnCoroutineFinished = new UnityEvent<int>();
 
     [SerializeField] private float duration = 1f;
     void Start()
@@ -54,5 +58,8 @@ public class CameraManager : MonoBehaviour
 
         _mainCamera.orthographicSize = newSize;
         _mainCamera.transform.localPosition = newPosition;
+
+        OnCoroutineFinished.Invoke(identifier);
+        
     }
 }

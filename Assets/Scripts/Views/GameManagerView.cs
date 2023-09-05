@@ -12,8 +12,11 @@ public class GameManagerView : MonoBehaviour
     [SerializeField] private CameraManager _cameraManager;
     [SerializeField] private CanvasGroupManager _backButton;
     [SerializeField] private bool backButtonEnabled = false;
-    private GameManagerController _gameManagerController;
     [SerializeField] private Image _currentPlayerIcon;
+    [SerializeField] private CanvasGroupManager _endScreenCanvas;
+    [SerializeField] private GameObject _tieText, _winText;
+    [SerializeField] private Image _winner;
+    private GameManagerController _controller;
 
     public bool BackButtonEnabled
     {
@@ -30,8 +33,9 @@ public class GameManagerView : MonoBehaviour
 
     private void Awake()
     {
+        _controller = transform.GetComponent<GameManagerController>();
         _cameraManager = FindObjectOfType<CameraManager>();
-        _gameManagerController = FindObjectOfType<GameManagerController>();
+        _cameraManager.OnCoroutineFinished.AddListener(_controller.HandleGroups);
     }
 
     public void SetIcon(int player, Button i, bool hasParent)
@@ -68,5 +72,25 @@ public class GameManagerView : MonoBehaviour
     public void UpdateCurrentPlayerIcon(int player)
     {
         _currentPlayerIcon.sprite = (player == 1) ? X : O;
+    }
+
+    public void WinScreen(int mainWinSituation)
+    {
+        _endScreenCanvas.FadeIn();
+        Debug.Log("Winner: " + mainWinSituation);
+        switch (mainWinSituation)
+        {
+            case -1:
+                _tieText.SetActive(true);
+                break;
+            case 1:
+                _winText.SetActive(true);
+                _winner.sprite = X;
+                break;
+            case 2:
+                _winText.SetActive(true);
+                _winner.sprite = O;
+                break;
+        }
     }
 }
