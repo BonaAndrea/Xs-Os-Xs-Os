@@ -48,6 +48,7 @@ public class GameManagerController : MonoBehaviour
     public void ButtonPress(Button button)
     {
         Debug.Log("Pressed button " + button.identifier);
+        //_view.StopAllCoroutines();
         CheckSlotAndPlay(button);
     }
 
@@ -207,6 +208,11 @@ public class GameManagerController : MonoBehaviour
             b.GroupBelowMe.blocksRaycasts=false;
             b.GroupBelowMe.alpha = 0f;
         }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
     
 }

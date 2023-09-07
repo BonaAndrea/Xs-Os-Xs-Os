@@ -93,4 +93,9 @@ public class GameManagerView : MonoBehaviour
                 break;
         }
     }
+    
+    public void StopAllOtherCoroutines(){
+        StopAllCoroutines();
+    }
+    
 }
