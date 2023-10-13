@@ -154,6 +154,8 @@ MonoBehaviour:
   GroupBelowMe: {fileID: 4271175939733391794}
   ManagerBelowMe: {fileID: 561441228468564052}
   ParentButton: {fileID: 0}
+  t: {fileID: 0}
+  i: {fileID: 0}
 --- !u!1 &8109816890001492742
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,12 +266,12 @@ RectTransform:
   - {fileID: 104288216045046959}
   - {fileID: 3303439960590253651}
   - {fileID: 307155432973319510}
+  - {fileID: 7106657666276219815}
   - {fileID: 59960547527856325}
   - {fileID: 9140653406891870288}
-  - {fileID: 7106657666276219815}
+  - {fileID: 3465643506408320030}
   - {fileID: 6276748645475657616}
   - {fileID: 1892425806295794121}
-  - {fileID: 3465643506408320030}
   m_Father: {fileID: 2360730196477315367}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}

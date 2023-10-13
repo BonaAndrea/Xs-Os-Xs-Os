@@ -17,7 +17,7 @@ public class GameManagerView : MonoBehaviour
     [SerializeField] private GameObject _tieText, _winText;
     [SerializeField] private Image _winner;
     private GameManagerController _controller;
-
+    private GameManagerModel _model;
     public bool BackButtonEnabled
     {
         get { return backButtonEnabled; }
@@ -34,34 +34,35 @@ public class GameManagerView : MonoBehaviour
     private void Awake()
     {
         _controller = transform.GetComponent<GameManagerController>();
+        _model = transform.GetComponent<GameManagerModel>();
         _cameraManager = FindObjectOfType<CameraManager>();
         _cameraManager.OnCoroutineFinished.AddListener(_controller.HandleGroups);
     }
 
-    public void SetIcon(int player, Button i, bool hasParent)
+    public void SetIcon(int player, Button b, bool hasParent)
     {
-        Transform t = i.transform.Find("Result");
         if (!hasParent)
         {
-            i.GetComponentInChildren<CanvasGroupManager>().FadeOut();
+            b.GetComponentInChildren<CanvasGroupManager>().FadeOut();
         }
 
         if (player == 1)
         {
-            t.gameObject.SetActive(true);
-            t.GetComponent<Image>().sprite = X;
+            b.t.gameObject.SetActive(true);
+            b.i.sprite = X;
         }
 
         if (player == 2)
         {
-            t.gameObject.SetActive(true);
-            t.GetComponent<Image>().sprite = O;
+           b.t.gameObject.SetActive(true);
+            b.i.sprite = O;
         }
     }
 
     public void MoveCamera(int identifier = 0)
     {
         StartCoroutine(_cameraManager.MoveToPosition(identifier));
+
     }
 
     private void OnBackButtonEnabledChanged()
@@ -97,5 +98,21 @@ public class GameManagerView : MonoBehaviour
     public void StopAllOtherCoroutines(){
         StopAllCoroutines();
     }
+    
+    public IEnumerator MoveCameraCoroutine(int identifier, Action onMoveComplete)
+    {
+        // Avvia l'animazione della telecamera
+        yield return StartCoroutine(_cameraManager.MoveToPosition((identifier>0)?identifier:identifier+1));
+
+        if (_controller.NextSchema == -1)
+        {
+            while (_cameraManager.IsAnimating)
+                yield return null;
+        }
+
+        onMoveComplete?.Invoke();
+    }
+
+    
     
 }

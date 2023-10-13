@@ -5,6 +5,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
 
+
+[System.Serializable]
+public struct BestMove
+{
+    public int subTrisIndex;
+    public int cellIndex;
+    public int score;
+}
+
+
+
 public class GameManagerController : MonoBehaviour
 {
 
@@ -38,7 +49,16 @@ public class GameManagerController : MonoBehaviour
     
     [SerializeField]
     private int _nextSchema = -1;
-    // Update is called once per frame
+
+    // Proprietà per accedere e modificare _nextSchema
+    public int NextSchema
+    {
+        get { return _nextSchema; }
+        set { _nextSchema = value; }
+    }    
+
+    
+    
     void Awake()
     {
         _model = FindObjectOfType<GameManagerModel>();
@@ -47,81 +67,84 @@ public class GameManagerController : MonoBehaviour
 
     public void ButtonPress(Button button)
     {
-        Debug.Log("Pressed button " + button.identifier);
-        //_view.StopAllCoroutines();
+        if (_model.GameMode == GameMode.Single && _player != 1) return;
         CheckSlotAndPlay(button);
     }
 
-    private void CheckSlotAndPlay(Button button)
+private void CheckSlotAndPlay(Button button)
+{
+    if (button.ParentButton == null)
     {
-        if (button.ParentButton == null)
+        if (_model.matrixes[0][button.identifier - 1] == 0) //la casella principale è ancora indeterminata
         {
-            if (_model.matrixes[0][button.identifier-1] == 0) //la casella principale è ancora indeterminata
+            if (_nextSchema == -1)
             {
-                if (_nextSchema == -1)
-                {
-                    _view.BackButtonEnabled = true;
-                }
-
-                _view.MoveCamera(button.identifier);
-                button.GroupBelowMe.alpha = 1f;
-                //button.SetGroupBelow(true);
-                button.SetGroupAbove(false);
-                Debug.Log("Acting on button", button.gameObject);
+                _view.BackButtonEnabled = true;
             }
-        }
-        else
-        {
-            bool playSuccessful = _model.matrixes[button.ParentButton.identifier][button.identifier] == 0;
 
-            if (playSuccessful)
-            {
-                _model.matrixes[button.ParentButton.identifier][button.identifier] = _player;
-                _view.SetIcon(_player, button, true);
-                int winSituation = CheckForWin(_model.matrixes[button.ParentButton.identifier]);
-                if (winSituation==1)
-                {
-                    _view.SetIcon(_player, button.ParentButton, false);
-                    _model.matrixes[0][button.ParentButton.identifier-1] = _player;
-                }
-                else if (winSituation == -1)
-                {
-                    _model.matrixes[0][button.ParentButton.identifier-1] = -1;
-                }
-
-                SetAllSubGroupsDisabled();
-                
-                int mainWinSituation = CheckForWin(_model.matrixes[0]);
-                if (mainWinSituation != 0)
-                {
-                    _view.MoveCamera();
-                    _view.WinScreen(mainWinSituation);
-                    return;
-                }
-                
-                //settare nuovo valore di nextSchema
-                _nextSchema = (_model.matrixes[0][((button.ParentButton==null)?button.identifier+1:(button.identifier))] != 0) ? -1 :button.identifier+1;
-                Debug.Log("Next Schema: " + _nextSchema);
-                _view.MoveCamera((_nextSchema == -1) ? 0 : _nextSchema);
-                if (_nextSchema > 0)
-                {
-                    _buttons[_nextSchema - 1].GroupBelowMe.alpha = 1f;
-                }
-                //else
-                //{
-                 //   SetAllTopGroupsEnabled();
-                //}
-
-                _view.BackButtonEnabled = false;
-                SwitchPlayer();
-            }
+            _view.MoveCamera(button.identifier);
+            button.GroupBelowMe.alpha = 1f;
+            button.SetGroupAbove(false);
+            Debug.Log("Acting on button", button.gameObject);
         }
     }
+    else
+    {
+        int playerSymbol = (_player == 1) ? 1 : -1;
+        bool playSuccessful = _model.matrixes[button.ParentButton.identifier][button.identifier] == 0;
+
+        if (playSuccessful)
+        {
+            _model.matrixes[button.ParentButton.identifier][button.identifier] = playerSymbol;
+            _view.SetIcon(_player, button, true);
+            int winSituation = CheckForWin(_model.matrixes[button.ParentButton.identifier]);
+            if (winSituation >= 1)
+            {
+                _view.SetIcon(_player, button.ParentButton, false);
+                _model.matrixes[0][button.ParentButton.identifier - 1] = playerSymbol;
+            }
+            else if (winSituation == -1)
+            {
+                _model.matrixes[0][button.ParentButton.identifier - 1] = -1;
+            }
+
+            SetAllSubGroupsDisabled();
+
+            int mainWinSituation = CheckForWin(_model.matrixes[0]);
+            if (mainWinSituation != 0)
+            {
+                _view.MoveCamera();
+                _view.WinScreen(mainWinSituation);
+                return;
+            }
+
+            //settare nuovo valore di nextSchema
+            _nextSchema = (_model.matrixes[0][((button.ParentButton == null) ? button.identifier + 1 : (button.identifier))] != 0) ? -1 : button.identifier + 1;
+            Debug.Log("Next Schema: " + _nextSchema);
+            _view.MoveCamera((_nextSchema == -1) ? 0 : _nextSchema);
+            if (_nextSchema > 0)
+            {
+                _buttons[_nextSchema - 1].GroupBelowMe.alpha = 1f;
+            }
+
+            _view.BackButtonEnabled = false;
+            SwitchPlayer();
+        }
+    }
+}
+
 
     private void SwitchPlayer()
     {
         Player %= 2;
         Player++;
+        if (_model.GameMode == GameMode.Single)
+        {
+            if (Player == 2)
+            {
+                PerformComputerMove();
+            }
+        }
     }
     
     private int CheckForWin(int[] board)
@@ -129,23 +152,31 @@ public class GameManagerController : MonoBehaviour
         // Check rows
         for (int row = 0; row < 3; row++)
         {
-            if (board[row * 3] == _player && board[row * 3 + 1] == _player && board[row * 3 + 2] == _player)
-                return 1; // Giocatore ha vinto
+            if (board[row * 3] == 1 && board[row * 3 + 1] == 1 && board[row * 3 + 2] == 1)
+                return 1; // Giocatore 1 ha vinto
+            if (board[row * 3] == -1 && board[row * 3 + 1] == -1 && board[row * 3 + 2] == -1)
+                return -1; // Giocatore 2 ha vinto
         }
 
         // Check columns
         for (int col = 0; col < 3; col++)
         {
-            if (board[col] == _player && board[col + 3] == _player && board[col + 6] == _player)
-                return 1; // Giocatore ha vinto
+            if (board[col] == 1 && board[col + 3] == 1 && board[col + 6] == 1)
+                return 1; // Giocatore 1 ha vinto
+            if (board[col] == -1 && board[col + 3] == -1 && board[col + 6] == -1)
+                return -1; // Giocatore 2 ha vinto
         }
 
         // Check diagonals
-        if (board[0] == _player && board[4] == _player && board[8] == _player)
-            return 1; // Giocatore ha vinto
+        if (board[0] == 1 && board[4] == 1 && board[8] == 1)
+            return 1; // Giocatore 1 ha vinto
+        if (board[0] == -1 && board[4] == -1 && board[8] == -1)
+            return -1; // Giocatore 2 ha vinto
 
-        if (board[2] == _player && board[4] == _player && board[6] == _player)
-            return 1; // Giocatore ha vinto
+        if (board[2] == 1 && board[4] == 1 && board[6] == 1)
+            return 1; // Giocatore 1 ha vinto
+        if (board[2] == -1 && board[4] == -1 && board[6] == -1)
+            return -1; // Giocatore 2 ha vinto
 
         // Nessuno ha ancora vinto, controlla se è un pareggio
         bool isFull = true;
@@ -159,10 +190,11 @@ public class GameManagerController : MonoBehaviour
         }
 
         if (isFull)
-            return -1; // Pareggio
+            return 2; // Pareggio
 
         return 0; // Nessuno ha ancora vinto e ci sono ancora mosse possibili
     }
+
 
     public void BackToMainGame()
     {
@@ -174,10 +206,10 @@ public class GameManagerController : MonoBehaviour
 
     public void SetAllSubGroupsDisabled()
     {
-        foreach (Button b in _buttons)
+        for(int i=0; i<9; i++) 
         {
-            b.GroupBelowMe.interactable=false;
-            b.GroupBelowMe.blocksRaycasts=false;
+            _buttons[i].GroupBelowMe.interactable=false;
+            _buttons[i].GroupBelowMe.blocksRaycasts=false;
         }
     }
     
@@ -202,11 +234,10 @@ public class GameManagerController : MonoBehaviour
     }
     public void DisableAllSubGroups()
     {
-        foreach (Button b in _buttons)
-        {
-            b.GroupBelowMe.interactable=false;
-            b.GroupBelowMe.blocksRaycasts=false;
-            b.GroupBelowMe.alpha = 0f;
+        for(int i=0; i<9; i++){
+            _buttons[i].GroupBelowMe.interactable=false;
+            _buttons[i].GroupBelowMe.blocksRaycasts=false;
+            _buttons[i].GroupBelowMe.alpha = 0f;
         }
     }
 
@@ -214,5 +245,299 @@ public class GameManagerController : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void ResetGame()
+    {
+        foreach (var matrix in _model.matrixes)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                matrix[j] = 0;
+            }
+        }
+
+        var buttons = FindObjectsOfType<Button>(true);
+        
+        foreach (var b in buttons)
+        {
+            b.i.sprite = null;
+            b.t.GameObject().SetActive(false);
+        }
+    }
     
+private BestMove MiniMaxForPlayer2(int depth, bool isMaximizing)
+{
+    // Verifica se il player 1 sta per vincere
+    if (IsPlayer1AboutToWin())
+    {
+        // Scegli la casella che blocca la tris del player 1
+        return new BestMove { subTrisIndex = -1, cellIndex = -1, score = -1000 };
+    }
+
+    int gameResult = CheckForWin(_model.matrixes[0]);
+    if (gameResult != 0 || depth == 0)
+        return new BestMove { subTrisIndex = -1, cellIndex = -1, score = EvaluateBoard(isMaximizing) };
+
+    int bestScore = isMaximizing ? int.MinValue : int.MaxValue;
+    BestMove bestMove = new BestMove { subTrisIndex = -1, cellIndex = -1, score = bestScore };
+
+    // Determine the range of sub-tris to consider based on _nextSchema
+    int startSubTris = (_nextSchema != -1) ? _nextSchema : 1;
+    int endSubTris = (_nextSchema != -1) ? _nextSchema : 9;
+
+    for (int subTrisIndex = startSubTris; subTrisIndex <= endSubTris; subTrisIndex++)
+    {
+        if (_nextSchema != -1 && _nextSchema != subTrisIndex)
+            continue;  // Skip if _nextSchema is specified and this is not the target sub-tris
+
+        List<int> availableCells = GetAvailableCells(subTrisIndex);
+
+        // If the center cell is available, prioritize occupying it
+        if (availableCells.Contains(4))
+        {
+            return new BestMove { subTrisIndex = subTrisIndex, cellIndex = 4, score = 0 };
+        }
+
+        // Check if the opponent is about to win in this sub-tris
+        foreach (int cellIndex in availableCells)
+        {
+            _model.matrixes[subTrisIndex][cellIndex] = 2;
+            int score = MiniMaxForPlayer1(depth - 1, !isMaximizing).score;
+            _model.matrixes[subTrisIndex][cellIndex] = 0;
+
+            if (isMaximizing && score > bestScore || !isMaximizing && score < bestScore)
+            {
+                bestScore = score;
+                bestMove = new BestMove { subTrisIndex = subTrisIndex, cellIndex = cellIndex, score = bestScore };
+            }
+        }
+    }
+
+    return bestMove;
+}
+
+
+
+
+
+
+
+// Funzione MiniMax semplificata per il giocatore 1 (umano)
+private BestMove MiniMaxForPlayer1(int depth, bool isMaximizing)
+{
+    int gameResult = CheckForWin(_model.matrixes[0]);
+    if (gameResult != 0 || depth == 0)
+        return new BestMove { subTrisIndex = -1, cellIndex = -1, score = EvaluateBoard(isMaximizing) };
+
+    int bestScore = isMaximizing ? int.MinValue : int.MaxValue;
+    BestMove bestMove = new BestMove { subTrisIndex = -1, cellIndex = -1, score = bestScore };
+
+    for (int subTrisIndex = 1; subTrisIndex <= 9; subTrisIndex++)
+    {
+        foreach (int cellIndex in GetAvailableCells(subTrisIndex))
+        {
+            _model.matrixes[subTrisIndex][cellIndex] = 1;
+            int score = MiniMaxForPlayer2(depth - 1, !isMaximizing).score;
+
+            if (isMaximizing)
+            {
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestMove = new BestMove { subTrisIndex = subTrisIndex, cellIndex = cellIndex, score = bestScore };
+                }
+            }
+            else
+            {
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    bestMove = new BestMove { subTrisIndex = subTrisIndex, cellIndex = cellIndex, score = bestScore };
+                }
+            }
+
+            _model.matrixes[subTrisIndex][cellIndex] = 0;
+        }
+    }
+
+    return bestMove;
+}
+
+    private List<int> GetAvailableCells(int subTrisIndex)
+    {
+        List<int> availableCells = new List<int>();
+
+        // Verifica solo se il sotto-tris è ancora giocabile
+        if (_model.matrixes[0][subTrisIndex - 1] == 0)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                if (_model.matrixes[subTrisIndex][i] == 0)
+                    availableCells.Add(i);
+            }
+        }
+
+        return availableCells;
+    }
+    private bool IsPlayer1AboutToWin()
+    {
+        // Controlla se il player 1 ha due caselle occupate in una tris
+        for (int i = 0; i < 3; i++)
+        {
+            if (_model.matrixes[0][i] == 1 && _model.matrixes[0][i + 3] == 1 && _model.matrixes[0][i + 6] == 0)
+                return true;
+            if (_model.matrixes[0][i] == 1 && _model.matrixes[0][i + 1] == 1 && _model.matrixes[0][i + 2] == 0)
+                return true;
+            if (_model.matrixes[0][i] == 1 && _model.matrixes[0][i * 3] == 1 && _model.matrixes[0][i * 6] == 0)
+                return true;
+        }
+
+        return false;
+    }
+
+    private int EvaluateBoard(bool isMaximizing)
+    {
+        int playerValue = isMaximizing ? 2 : 1;  // Assign the value based on the player
+        int opponentValue = 3 - playerValue;  // The value for the opponent (1 if playerValue is 2, 2 if playerValue is 1)
+
+        int gameResult = CheckForWin(_model.matrixes[0]);
+        if (gameResult == playerValue)
+            return 100;
+        else if (gameResult == opponentValue)
+            return -100;
+
+        // Controlla se il player 1 sta per vincere
+        if (IsPlayer1AboutToWin())
+            return -10000;
+
+        // Assegna un valore di priorità alle mosse che occupano la casella centrale
+        if (_model.matrixes[0][4] == 0)
+            return 1000;
+
+        // Assegna un valore di priorità alle mosse che bloccano le tris del player 1
+        int priority = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            if (_model.matrixes[0][i] == 1 && _model.matrixes[0][i + 3] == 1 && _model.matrixes[0][i + 6] == 0)
+                priority += 1000;
+            if (_model.matrixes[0][i] == 1 && _model.matrixes[0][i + 1] == 1 && _model.matrixes[0][i + 2] == 0)
+                priority += 1000;
+            if (_model.matrixes[0][i] == 1 && _model.matrixes[0][i * 3] == 1 && _model.matrixes[0][i * 6] == 0)
+                priority += 1000;
+        }
+
+        return priority;
+    }
+
+
+    private void PerformComputerMove()
+    {
+        StartCoroutine(PerformComputerMoveCoroutine());
+    }
+
+    private IEnumerator PerformComputerMoveCoroutine()
+    {
+        bool cameraMoveCompleted = false;
+        bool bestMoveCalculated = false;
+        BestMove bestMove = new BestMove();
+
+        // Avvia l'animazione della telecamera
+        Coroutine cameraMoveCoroutine = StartCoroutine(_view.MoveCameraCoroutine(_nextSchema, () => cameraMoveCompleted = true));
+
+        // Calcola la mossa migliore in background
+        StartCoroutine(CalculateBestMoveInBackground((result) =>
+        {
+            bestMove = result;
+            bestMoveCalculated = true;
+        }));
+
+        // Attendiamo che la telecamera completi il movimento
+        yield return new WaitUntil(() => cameraMoveCompleted);
+
+        // Attendiamo che il calcolo della mossa migliore sia completato
+        yield return new WaitUntil(() => bestMoveCalculated);
+
+        if (_nextSchema == -1)
+        {
+            cameraMoveCompleted = false;
+
+            cameraMoveCoroutine = StartCoroutine(_view.MoveCameraCoroutine(bestMove.subTrisIndex, () => cameraMoveCompleted = true));
+            yield return new WaitUntil(() => cameraMoveCompleted);
+            yield return new WaitForSecondsRealtime(0.2f);
+        }
+
+        // Esegui la mossa migliore calcolata dall'algoritmo MiniMax
+        if (bestMove.subTrisIndex != -1 && bestMove.cellIndex != -1)
+        {
+            Button buttonToPress = _buttons[(bestMove.subTrisIndex) * 9 + bestMove.cellIndex];
+            // Esegui la mossa
+            _model.matrixes[bestMove.subTrisIndex][bestMove.cellIndex] = _player;
+            Debug.Log("Best move: " + bestMove.subTrisIndex + ", " + bestMove.cellIndex);
+            Debug.Log("Button: ", buttonToPress.gameObject);
+            _view.SetIcon(_player, buttonToPress, true);
+            int winSituation = CheckForWin(_model.matrixes[bestMove.subTrisIndex]);
+            if (winSituation>=1)
+            {
+                _view.SetIcon(_player, buttonToPress.ParentButton, false);
+                _model.matrixes[0][bestMove.subTrisIndex-1] = _player;
+            }
+            else if (winSituation == -1)
+            {
+                _model.matrixes[0][bestMove.subTrisIndex-1] = -1;
+            }
+
+            SetAllSubGroupsDisabled();
+                
+            int mainWinSituation = CheckForWin(_model.matrixes[0]);
+            if (mainWinSituation != 0)
+            {
+                _view.MoveCamera();
+                _view.WinScreen(mainWinSituation);
+                yield break;
+            }
+                
+            //settare nuovo valore di nextSchema
+            _nextSchema = (_model.matrixes[0][((buttonToPress.ParentButton==null)?buttonToPress.identifier+1:(buttonToPress.identifier))] != 0) ? -1 :buttonToPress.identifier+1;
+            _view.MoveCamera((_nextSchema == -1) ? 0 : _nextSchema);
+            if (_nextSchema > 0)
+            {
+                _buttons[_nextSchema - 1].GroupBelowMe.alpha = 1f;
+            }
+
+            _view.BackButtonEnabled = false;
+            
+        }
+
+        SwitchPlayer();
+    }
+
+    private IEnumerator CalculateBestMoveInBackground(Action<BestMove> onBestMoveCalculated)
+    {
+        yield return new WaitForSeconds(2f);
+
+        // Esempio di una mossa migliore calcolata
+        BestMove bestMove = MiniMaxForPlayer2(5, true);
+
+        onBestMoveCalculated?.Invoke(bestMove);
+    }
+
+
+
+    public void SetGameMode(int value)
+    {
+        switch (value)
+        {
+            case 0:
+                _model.GameMode = GameMode.Single;
+                break;
+            case 1:
+                _model.GameMode = GameMode.Local;
+                break;
+            case 2:
+                _model.GameMode = GameMode.Online;
+                break;
+        }
+    }
+
+
 }

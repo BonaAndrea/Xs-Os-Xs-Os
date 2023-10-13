@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Button : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class Button : MonoBehaviour
     public CanvasGroup GroupBelowMe;
     public CanvasGroupManager ManagerBelowMe;
     public Button ParentButton = null;
+    public Transform t;
+    public Image i;
+
 
     private void Awake()
     {
@@ -19,6 +23,11 @@ public class Button : MonoBehaviour
         if (transform.parent.transform.parent.GetComponent<Button>())
         {
             ParentButton = transform.parent.transform.parent.GetComponent<Button>();
+        }
+
+        t = transform.Find("Result");
+        if(t.GetComponent<Image>()){
+            i = t.GetComponent<Image>();
         }
     }
 
