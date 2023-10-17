@@ -551,6 +551,9 @@ private BestMove MiniMaxForPlayer1(int depth, bool isMaximizing)
     public void ResetGameCamera()
     {
         _view.MoveCamera();
+        _model.GameMode = GameMode.Uninitialized;
+        _player = 1;
+        StopAllCoroutines();
     }
 
 
