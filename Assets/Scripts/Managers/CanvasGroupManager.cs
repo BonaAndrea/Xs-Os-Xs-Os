@@ -2,10 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 [RequireComponent(typeof(CanvasGroup))]
 public class CanvasGroupManager : MonoBehaviour
 {
     private CanvasGroup _canvasGroup;
+
+    public UnityEvent OnFadeIn;
+    public UnityEvent OnFadeOut;
 
     private void Awake()
     {
@@ -41,6 +46,7 @@ public class CanvasGroupManager : MonoBehaviour
             }
 
             _canvasGroup.alpha = targetAlpha;
+            OnFadeIn.Invoke();
         }
         else
         {
@@ -59,6 +65,7 @@ public class CanvasGroupManager : MonoBehaviour
             }
 
             _canvasGroup.alpha = targetAlpha;
+            OnFadeOut.Invoke();
         }
     }
 
@@ -76,5 +83,4 @@ public class CanvasGroupManager : MonoBehaviour
         _canvasGroup.interactable = value;
         _canvasGroup.blocksRaycasts = value;
     }
-    
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
+using Random = UnityEngine.Random;
 
 
 [System.Serializable]
@@ -50,17 +51,19 @@ public class GameManagerController : MonoBehaviour
     [SerializeField]
     private int _nextSchema = -1;
 
-    // Proprietà per accedere e modificare _nextSchema
     public int NextSchema
     {
         get { return _nextSchema; }
         set { _nextSchema = value; }
-    }    
+    }
 
-    
+    [SerializeField] private AudioClip _moveSound;
+    [SerializeField]
+    private AudioSourceController _audioSourceController;
     
     void Awake()
     {
+        Application.targetFrameRate = 60;
         _model = FindObjectOfType<GameManagerModel>();
         _view = FindObjectOfType<GameManagerView>();
     }
@@ -98,7 +101,7 @@ private void CheckSlotAndPlay(Button button)
             _model.matrixes[button.ParentButton.identifier][button.identifier] = playerSymbol;
             _view.SetIcon(_player, button, true);
             int winSituation = CheckForWin(_model.matrixes[button.ParentButton.identifier]);
-            if (winSituation >= 1)
+            if (winSituation != 0)
             {
                 _view.SetIcon(_player, button.ParentButton, false);
                 _model.matrixes[0][button.ParentButton.identifier - 1] = playerSymbol;
@@ -267,39 +270,30 @@ private void CheckSlotAndPlay(Button button)
     
 private BestMove MiniMaxForPlayer2(int depth, bool isMaximizing)
 {
-    // Verifica se il player 1 sta per vincere
-    if (IsPlayer1AboutToWin())
-    {
-        // Scegli la casella che blocca la tris del player 1
-        return new BestMove { subTrisIndex = -1, cellIndex = -1, score = -1000 };
-    }
-
-    int gameResult = CheckForWin(_model.matrixes[0]);
-    if (gameResult != 0 || depth == 0)
+    // Verifica se il gioco è finito
+    if (CheckForWin(_model.matrixes[0]) != 0 || depth == 0)
         return new BestMove { subTrisIndex = -1, cellIndex = -1, score = EvaluateBoard(isMaximizing) };
 
+    // Genera una mossa casuale se la profondità di ricerca è bassa
+    if (depth < 3)
+    {
+        int subTrisIndex = Random.Range(1, 10);
+        int cellIndex = Random.Range(0, 9);
+
+        return new BestMove { subTrisIndex = subTrisIndex, cellIndex = cellIndex, score = EvaluateBoard(isMaximizing) };
+    }
+
+    // Esegui il normale algoritmo MiniMax
     int bestScore = isMaximizing ? int.MinValue : int.MaxValue;
     BestMove bestMove = new BestMove { subTrisIndex = -1, cellIndex = -1, score = bestScore };
+    int randomMovesCount = 0;
 
-    // Determine the range of sub-tris to consider based on _nextSchema
-    int startSubTris = (_nextSchema != -1) ? _nextSchema : 1;
-    int endSubTris = (_nextSchema != -1) ? _nextSchema : 9;
-
-    for (int subTrisIndex = startSubTris; subTrisIndex <= endSubTris; subTrisIndex++)
+    for (int subTrisIndex = 1; subTrisIndex <= 9; subTrisIndex++)
     {
         if (_nextSchema != -1 && _nextSchema != subTrisIndex)
-            continue;  // Skip if _nextSchema is specified and this is not the target sub-tris
+            continue;  // Se è specificato un sottoschema, salta gli altri
 
-        List<int> availableCells = GetAvailableCells(subTrisIndex);
-
-        // If the center cell is available, prioritize occupying it
-        if (availableCells.Contains(4))
-        {
-            return new BestMove { subTrisIndex = subTrisIndex, cellIndex = 4, score = 0 };
-        }
-
-        // Check if the opponent is about to win in this sub-tris
-        foreach (int cellIndex in availableCells)
+        foreach (int cellIndex in GetAvailableCells(subTrisIndex))
         {
             _model.matrixes[subTrisIndex][cellIndex] = 2;
             int score = MiniMaxForPlayer1(depth - 1, !isMaximizing).score;
@@ -313,12 +307,26 @@ private BestMove MiniMaxForPlayer2(int depth, bool isMaximizing)
         }
     }
 
-    return bestMove;
+    // Se non è stata trovata alcuna mossa valida nel sottoschema assegnato o se non c'è un sottoschema assegnato
+    if (bestMove.subTrisIndex == -1)
+    {
+        if (_nextSchema != -1)
+            randomMovesCount++;  // Incrementa solo se non c'è un sottoschema specifico
+
+        // Se il sottoschema indicato è valido, fai una mossa casuale in quel sottoschema
+        foreach (int cellIndex in GetAvailableCells(_nextSchema))
+        {
+            return new BestMove { subTrisIndex = _nextSchema, cellIndex = cellIndex, score = EvaluateBoard(isMaximizing) };
+        }
+    }
+    else
+    {
+        return bestMove;  // Se c'è una mossa migliore trovata nel sottoschema assegnato, restituisci quella
+    }
+
+    // Fai una mossa casuale in qualsiasi sottoschema se non ci sono condizioni precedenti
+    return new BestMove { subTrisIndex = Random.Range(1, 10), cellIndex = Random.Range(0, 9), score = EvaluateBoard(isMaximizing) };
 }
-
-
-
-
 
 
 
@@ -440,6 +448,7 @@ private BestMove MiniMaxForPlayer1(int depth, bool isMaximizing)
         bool cameraMoveCompleted = false;
         bool bestMoveCalculated = false;
         BestMove bestMove = new BestMove();
+        int playerSymbol = (_player == 1) ? 1 : -1;
 
         // Avvia l'animazione della telecamera
         Coroutine cameraMoveCoroutine = StartCoroutine(_view.MoveCameraCoroutine(_nextSchema, () => cameraMoveCompleted = true));
@@ -450,7 +459,6 @@ private BestMove MiniMaxForPlayer1(int depth, bool isMaximizing)
             bestMove = result;
             bestMoveCalculated = true;
         }));
-
         // Attendiamo che la telecamera completi il movimento
         yield return new WaitUntil(() => cameraMoveCompleted);
 
@@ -460,7 +468,7 @@ private BestMove MiniMaxForPlayer1(int depth, bool isMaximizing)
         if (_nextSchema == -1)
         {
             cameraMoveCompleted = false;
-
+            _audioSourceController.PlaySound(_moveSound);
             cameraMoveCoroutine = StartCoroutine(_view.MoveCameraCoroutine(bestMove.subTrisIndex, () => cameraMoveCompleted = true));
             yield return new WaitUntil(() => cameraMoveCompleted);
             yield return new WaitForSecondsRealtime(0.2f);
@@ -471,19 +479,20 @@ private BestMove MiniMaxForPlayer1(int depth, bool isMaximizing)
         {
             Button buttonToPress = _buttons[(bestMove.subTrisIndex) * 9 + bestMove.cellIndex];
             // Esegui la mossa
-            _model.matrixes[bestMove.subTrisIndex][bestMove.cellIndex] = _player;
+            _model.matrixes[bestMove.subTrisIndex][bestMove.cellIndex] = playerSymbol;
             Debug.Log("Best move: " + bestMove.subTrisIndex + ", " + bestMove.cellIndex);
             Debug.Log("Button: ", buttonToPress.gameObject);
             _view.SetIcon(_player, buttonToPress, true);
+            _audioSourceController.PlaySound(_moveSound);
             int winSituation = CheckForWin(_model.matrixes[bestMove.subTrisIndex]);
-            if (winSituation>=1)
+            if (winSituation!=0)
             {
                 _view.SetIcon(_player, buttonToPress.ParentButton, false);
-                _model.matrixes[0][bestMove.subTrisIndex-1] = _player;
+                _model.matrixes[0][bestMove.subTrisIndex-1] = playerSymbol;
             }
-            else if (winSituation == -1)
+            else if (winSituation == 2)
             {
-                _model.matrixes[0][bestMove.subTrisIndex-1] = -1;
+                _model.matrixes[0][bestMove.subTrisIndex-1] = 2;
             }
 
             SetAllSubGroupsDisabled();
@@ -537,6 +546,11 @@ private BestMove MiniMaxForPlayer1(int depth, bool isMaximizing)
                 _model.GameMode = GameMode.Online;
                 break;
         }
+    }
+
+    public void ResetGameCamera()
+    {
+        _view.MoveCamera();
     }
 
 

@@ -81,14 +81,14 @@ public class GameManagerView : MonoBehaviour
         Debug.Log("Winner: " + mainWinSituation);
         switch (mainWinSituation)
         {
-            case -1:
+            case 2:
                 _tieText.SetActive(true);
                 break;
             case 1:
                 _winText.SetActive(true);
                 _winner.sprite = X;
                 break;
-            case 2:
+            case -1:
                 _winText.SetActive(true);
                 _winner.sprite = O;
                 break;

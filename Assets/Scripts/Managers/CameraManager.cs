@@ -23,49 +23,6 @@ public class CameraManager : MonoBehaviour
         _mainCamera = Camera.main;
     }
 
-/*    public IEnumerator MoveToPosition(int identifier)
-    {
-        float startSize = _mainCamera.orthographicSize;
-        Vector3 startPosition = _mainCamera.transform.position;
-        float startTime = Time.time;
-
-        float newSize = _cameraSize0;
-        Vector3 newPosition = _cameraPositions[0].position;
-
-        // Prima animazione verso camerasize e position 0
-        while (Time.time - startTime < duration)
-        {
-            float t = (Time.time - startTime) / duration;
-            _mainCamera.orthographicSize = Mathf.Lerp(startSize, newSize, t);
-            _mainCamera.transform.localPosition = Vector3.Lerp(startPosition, newPosition, t);
-            yield return null;
-        }
-
-        // Imposta le dimensioni e la posizione finali
-        startSize = _mainCamera.orthographicSize;
-        startPosition = _mainCamera.transform.position;
-        newSize = (identifier == 0) ? _cameraSize0 : _cameraSize1;
-        newPosition = _cameraPositions[identifier].position;
-
-        // Animazione verso la posizione finale
-        startTime = Time.time;
-        while (Time.time - startTime < duration)
-        {
-            float t = (Time.time - startTime) / duration;
-            _mainCamera.orthographicSize = Mathf.Lerp(startSize, newSize, t);
-            _mainCamera.transform.localPosition = Vector3.Lerp(startPosition, newPosition, t);
-            yield return null;
-        }
-
-        _mainCamera.orthographicSize = newSize;
-        _mainCamera.transform.localPosition = newPosition;
-
-        OnCoroutineFinished.Invoke(identifier);
-        
-    }*/
-
-
-// Aggiorna MoveToPosition per restituire una coroutine invece di avviare direttamente la coroutine
 public IEnumerator MoveToPosition(int identifier)
 {
     IsAnimating = true;
