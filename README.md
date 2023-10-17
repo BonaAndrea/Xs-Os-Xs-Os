@@ -1,6 +1,8 @@
 # X's & O's & X's & O's
 
-![X's & O's & X's & O's Game Screenshot](screenshot.png)
+<p align="center">
+  <img src="screenshot.png" alt="X's & O's & X's & O's Game Screenshot">
+</p>
 
 ## Description
 
