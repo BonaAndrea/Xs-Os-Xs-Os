@@ -1,4 +1,4 @@
-# X's & O's & X's & O's Mobile Game
+# X's & O's & X's & O's
 
 ![X's & O's & X's & O's Game Screenshot](screenshot.png)
 
@@ -19,14 +19,14 @@
 
 ## How to Play - WEBGL
 
-1. Open the game in your browser by [clicking here](link-to-the-game).
+1. Open the game in your browser by [clicking here](https://BonaAndrea.github.io/gamefiles/xsos/xsos.html).
 2. Choose your desired game mode: "Play against a friend" or "Play against the computer."
 3. Click on an empty square to place your mark (X or O).
 4. The goal is to align three consecutive marks horizontally, vertically, or diagonally.
 
 ## Android Build
 
-- [Download the Android APK here](link-to-android-build) and install it on your Android device to play on the go!
+- [Download the Android APK here](https://BonaAndrea.github.io/gamefiles/xsos/Others/XsOsXsOs_1.0.apk) and install it on your Android device to play on the go!
 
 ## Contact
 
