@@ -2,43 +2,37 @@
 
 ![X's & O's & X's & O's Game Screenshot](screenshot.png)
 
-## Descrizione
+## Description
 
-"X's & O's & X's & O's" è una versione mobile del classico gioco del tris (Tic-Tac-Toe). Mettiti alla prova contro un amico o contro il computer e cercate di allineare tre segni consecutivi orizzontalmente, verticalmente o diagonalmente.
+"X's & O's & X's & O's" is a "squared up" version of the classic tic-tac-toe game. Challenge a friend or play against the computer, aiming to align three consecutive marks horizontally, vertically, or diagonally.
 
-## Caratteristiche
+## Features
 
-- Interfaccia utente intuitiva e facile da usare.
-- Modalità di gioco a due giocatori o contro il computer.
-- Implementazione del gioco con una struttura model-view-controller (MVC) per una gestione efficiente del codice.
+- Intuitive and user-friendly interface.
+- Two-player mode or play against the computer.
+- Game implementation using Unity and C# with a model-view-controller (MVC) architecture for efficient code management.
 
-## Tecnologie Utilizzate
+## Technologies Used
 
-- HTML5
-- CSS3
-- JavaScript
+- Unity
+- C#
 
-## Come Giocare
+## How to Play - WEBGL
 
-1. Apri il gioco nel browser [cliccando qui](link-al-gioco).
-2. Seleziona la modalità di gioco desiderata: "Gioca contro un amico" o "Gioca contro il computer".
-3. Clicca su una casella vuota per inserire il tuo segno (X o O).
-4. Lo scopo è allineare tre segni consecutivi orizzontalmente, verticalmente o diagonalmente.
+1. Open the game in your browser by [clicking here](link-to-the-game).
+2. Choose your desired game mode: "Play against a friend" or "Play against the computer."
+3. Click on an empty square to place your mark (X or O).
+4. The goal is to align three consecutive marks horizontally, vertically, or diagonally.
 
-## Contribuire
+## Android Build
 
-Se desideri contribuire a questo progetto, segui questi passaggi:
+- [Download the Android APK here](link-to-android-build) and install it on your Android device to play on the go!
 
-1. Fai il fork del repository.
-2. Clona il repository nel tuo ambiente locale.
-3. Apporta le modifiche e aggiungi nuove funzionalità.
-4. Esegui il push delle modifiche nel tuo fork.
-5. Crea una richiesta di pull descrivendo le modifiche apportate.
+## Contact
 
-## Contatti
+- [GitHub Profile](https://github.com/BonaAndrea)
+- [Portfolio](https://BonaAndrea.github.io)
 
-- [Profilo GitHub](https://github.com/BonaAndrea)
+## License
 
-## Licenza
-
-Questo progetto è concesso in licenza con la [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
