@@ -7842,6 +7842,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Quit
       objectReference: {fileID: 0}
+    - target: {fileID: 7433042587135629254, guid: a61502d0005a4c045b3f908163f49889, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8615536308931283786, guid: a61502d0005a4c045b3f908163f49889, type: 3}
       propertyPath: m_Sprite
       value: 
