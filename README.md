@@ -20,9 +20,9 @@
 ## How to Play - WEBGL
 
 1. Open the game in your browser by [clicking here](https://BonaAndrea.github.io/gamefiles/xsos/xsos.html).
-2. Choose your desired game mode: "Play against a friend" or "Play against the computer."
-3. Click on an empty square to place your mark (X or O).
-4. The goal is to align three consecutive marks horizontally, vertically, or diagonally.
+2. Choose your desired game mode: "Single" to play against the computer or "Local" to play against a friend on the same machine.
+4. Click on an empty square to place your mark (X or O).
+5. The goal is to align three consecutive marks horizontally, vertically, or diagonally, but there's a twist! The game is...squared up!
 
 ## Android Build
 
